@@ -3,7 +3,7 @@ import psycopg2
 
 # ------------------ EXTRACT ------------------
 url = "https://api.tvmaze.com/shows"
-response = requests.get(url)
+response = requests.get(url, timeout=10)
 response.raise_for_status()
 data = response.json()[:5]
 
@@ -18,12 +18,11 @@ for show in data:
 
 # ------------------ LOAD ------------------
 conn = psycopg2.connect(
-    host="localhost",   # since no airflow docker now
+    host="localhost",
     database="airflow",
     user="airflow",
     password="airflow"
 )
-
 cur = conn.cursor()
 
 cur.execute("""
@@ -34,6 +33,7 @@ cur.execute("""
     )
 """)
 
+# avoid duplicates for demo
 cur.execute("DELETE FROM movies")
 
 for movie in cleaned_data:
@@ -46,4 +46,4 @@ conn.commit()
 cur.close()
 conn.close()
 
-print("ETL Pipeline Executed Successfully 🚀")
+print("ETL Pipeline Executed Successfully")
