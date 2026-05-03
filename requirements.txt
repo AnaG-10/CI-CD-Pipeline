@@ -1,4 +1,2 @@
 requests
-pandas
 psycopg2
-apache-airflow
